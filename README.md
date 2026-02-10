@@ -36,7 +36,8 @@ font_color=aaffffff
 model=llama-3.2-1b-instruct-q8_0.gguf
 ```
 By default window appears in the screen center.
-
+You can put any png/jpg image you want to the app's directory and set it as
+a background in config.conf.
 
 <a id="dev"></a>
 ## Dev
