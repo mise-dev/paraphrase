@@ -10,7 +10,9 @@ A cross-platform c++ paraphrase tool built with qt5 and libllama.
 **Default HotKey: Alt+v**
 [Download Latest Release]
 (https://github.com/mise-dev/paraphrase/releases/latest)
-
+[Download AI Model]
+(https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF/resolve/main/llama-3.2-1b-instruct-q8_0.gguf?download=true)
+Put it into the 
 <a id="guide"></a>
 ## Info
 **Basic app info**
