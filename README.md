@@ -1,4 +1,4 @@
-# paraphrase (uploading in progress)
+# paraphrase
 A cross-platform c++ paraphrase tool built with qt5 and libllama.
 ## Table of Contents
 - [Quick Start](#quick-start)
@@ -13,6 +13,8 @@ A cross-platform c++ paraphrase tool built with qt5 and libllama.
 #### [Download AI Model]
 (https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF/resolve/main/llama-3.2-1b-instruct-q8_0.gguf?download=true)
 #### Put it into the app's main directory.
+#### Usage
+Hotkey->write text you want to paraphrase->Hotkey->text appears in you clipboard
 <a id="guide"></a>
 ## Info
 ### Basic app info
