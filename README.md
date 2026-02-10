@@ -15,11 +15,11 @@ A cross-platform c++ paraphrase tool built with qt5 and libllama.
 Put it into the 
 <a id="guide"></a>
 ## Info
-**Basic app info**
+### Basic app info
 Stack: c++, qt5, libllama.
 This app was created as a privacy tool: it should prevent write style tracing.
 You can build it by yourself or run a pre-build portable version.
-**Config.conf** provides some ricing options.
+### Config.conf provides some ricing options.
 ```bash
 # hotkey
 hotkey=Alt+v
