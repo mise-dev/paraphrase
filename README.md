@@ -14,7 +14,7 @@ A cross-platform c++ paraphrase tool built with qt5 and libllama.
 ## Info
 **Basic app info**
 Stack: c++, qt5, libllama.
-This app was created as a privacy tool: it should prevent write stile tracing.
+This app was created as a privacy tool: it should prevent write style tracing.
 You can build it by yourself or run a pre-build portable version.
 **Config.conf** provides some ricing options.
 ```bash
