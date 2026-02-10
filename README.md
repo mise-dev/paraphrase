@@ -1,4 +1,4 @@
-# paraphrase
+# paraphrase (uploading in progress)
 A cross-platform c++ paraphrase tool built with qt5 and libllama.
 ## Table of Contents
 - [Quick Start](#quick-start)
