@@ -8,7 +8,8 @@ A cross-platform c++ paraphrase tool built with qt5 and libllama.
 <a id="quick-start"></a>
 ## Quick Start
 **Default HotKey: Alt+v**
-[Download Latest Release](https://github.com/mise-dev/paraphrase/releases/latest)
+[Download Latest Release]
+(https://github.com/mise-dev/paraphrase/releases/latest)
 
 <a id="guide"></a>
 ## Info
@@ -67,7 +68,8 @@ The source code for Qt5 can be obtained from:
 - Qt website: https://www.qt.io/download
 
 #### Additional License Information:
-This application does **not** use Qt under a commercial license. All Qt components used are available under LGPL v3 or compatible licenses.
+This application does **not** use Qt under a commercial license.
+All Qt components used are available under LGPL v3 or compatible licenses.
 ### Ai Model used
  - https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF
 
