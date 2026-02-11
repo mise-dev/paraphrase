@@ -9,6 +9,7 @@
 #include <QHotkey>
 #include <QTextEdit>
 #include <iostream>
+#include <string>
 #include <chrono>
 #include <QClipboard>
 #include <QScreen>
@@ -20,39 +21,14 @@ static void llama_log_callback_null(ggml_log_level level, const char * text, voi
     (void) text;
     (void) user_data;
 }
-void paraphrase_ai(std::string& text, std::string model_str){
-    std::string system_msg = "You are a helpful assistant that rewrites text in different words. Output only the rewritten text, nothing else.";
-    std::string user_msg = "Rewrite this text: \"" + text + "\"";
-
-    std::string prompt = 
-    "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n" +
-    system_msg + 
-    "<|eot_id|><|start_header_id|>user<|end_header_id|>\n" +
-    user_msg + 
-    "<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n";
-    text="";
-    // number of layers to offload to the GPU
-    int ngl = 0;
+void paraphrase_ai(std::string& text,llama_model* model){
+    std::string prompt = "REWRITE THIS EXACT TEXT WITH DIFFERENT WORDS. STOP AFTER REWRITE.\n";
+    prompt += "TEXT: \"" + text + "\"\n";
+    prompt += "REWRITTEN: ";
     // number of tokens to predict
-    int n_predict = 32;
+    const int n_predict = 32;
 
-    // load dynamic backends
-
-    ggml_backend_load_all();
-    llama_log_set(llama_log_callback_null, NULL);
-
-    // initialize the model
-
-    llama_model_params model_params = llama_model_default_params();
-    model_params.n_gpu_layers = ngl;
-
-    llama_model* model = llama_model_load_from_file(model_str.c_str(), model_params);
-
-    if (model == NULL) {
-        fprintf(stderr , "%s: error: unable to load model\n" , __func__);
-    }
-
-    const llama_vocab * vocab = llama_model_get_vocab(model);
+    static const llama_vocab * vocab = llama_model_get_vocab(model);
     // tokenize the prompt
 
     // find the number of tokens in the prompt
@@ -80,7 +56,7 @@ void paraphrase_ai(std::string& text, std::string model_str){
     }
 
     // initialize the sampler
-    llama_sampler * smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
+    static llama_sampler * smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
     llama_sampler_chain_add(smpl, llama_sampler_init_temp(0.8f));
     llama_sampler_chain_add(smpl, llama_sampler_init_dist(LLAMA_DEFAULT_SEED));
 
@@ -144,20 +120,20 @@ void paraphrase_ai(std::string& text, std::string model_str){
     
             }
             std::string s(buf, n);
-            //printf("%s", s.c_str());
             text+=s.c_str();
-            fflush(stdout);
-
+            if (std::count(text.begin(), text.end(), '"') >= 2) {
+                break;
+            }
             // prepare the next batch with the sampled token
             batch = llama_batch_get_one(&new_token_id, 1);
 
             n_decode += 1;
         }
     }
+    size_t start = text.find('"');
+    size_t end = text.find('"',start+1);
+    text=text.substr(start+1,end-start-1);
     llama_free(ctx);
-    llama_model_free(model);
-    llama_backend_free();
-
 }
 std::map<std::string, std::string> parseConfigFile(const std::string& filename) {
     std::ifstream file(filename);
@@ -221,6 +197,23 @@ int main(int argc, char *argv[]){
     std::string hotkey_str = config["hotkey"];
     std::string backimg = config["background_img"];
     int overwrite_xy = std::stoi(config["overwrite_xy"]);
+    //libllama
+    int ngl = 0;
+    // load dynamic backends
+    ggml_backend_load_all();
+    llama_log_set(llama_log_callback_null, NULL);
+
+    // initialize the model
+
+    llama_model_params model_params = llama_model_default_params();
+    model_params.n_gpu_layers = ngl;
+
+    llama_model* model = llama_model_load_from_file(model_str.c_str(), model_params);
+
+    if (model == NULL) {
+        fprintf(stderr , "%s: error: unable to load model\n" , __func__);
+    }
+    //
     QApplication app(argc, argv);
     QHotkey *hotkey = new QHotkey(QKeySequence(QString::fromStdString(hotkey_str)), true, &app);
     QWidget *window = new QWidget();
@@ -238,6 +231,14 @@ int main(int argc, char *argv[]){
     }
     window->setGeometry(x, y, width, height);
     if (fs::exists(backimg))window->setStyleSheet("background-image: url(" + QString::fromStdString(backimg) + ");");
+    QLabel *overlay = new QLabel(window);
+    QPixmap pixmap("./data/progress.png");
+    overlay->setPixmap(pixmap);
+    overlay->setAttribute(Qt::WA_TranslucentBackground);
+    overlay->setStyleSheet("background: transparent;");
+    overlay->setGeometry(0, 0, width, height);
+    overlay->show();
+    overlay->hide();
     QTextEdit *textEdit;
     textEdit = new QTextEdit(window);
     QVBoxLayout *layout = new QVBoxLayout(window);
@@ -254,7 +255,8 @@ int main(int argc, char *argv[]){
     font.setItalic(false);
     font.setUnderline(false);
     textEdit->setFont(font);
-    QObject::connect(hotkey, &QHotkey::activated, [window,textEdit,clipboard,model_str](){
+    QObject::connect(hotkey, &QHotkey::activated, [window,textEdit,clipboard,model,overlay](){
+        
         static int window_show = 0;
         window_show=(window_show+1)%2;
         if(window_show){
@@ -263,19 +265,24 @@ int main(int argc, char *argv[]){
             window->raise();
         }
         else{
-            window->hide();
+            
+            overlay->show();
+            overlay->raise();
+            overlay->repaint(); 
             QString qstr = textEdit->toPlainText();
             textEdit->clear();
-            
             std::string str = qstr.toStdString();
-            paraphrase_ai(str, model_str);
-            str.erase(str.length() - 1, 1);
-            str.erase(0, 1);
+            paraphrase_ai(str,model);
             qstr=QString::fromStdString(str);
             
             clipboard->setText(qstr);
+            overlay->hide();
+            window->hide();
         }
     });
 
     return app.exec();
+    llama_model_free(model);
+    llama_backend_free();
+
 }
