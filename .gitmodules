@@ -1,3 +1,6 @@
 [submodule "llama.cpp"]
 	path = llama.cpp
 	url = https://github.com/ggml-org/llama.cpp
+[submodule "QHotkey"]
+	path = QHotkey
+	url = https://github.com/Skycoder42/QHotkey.git
