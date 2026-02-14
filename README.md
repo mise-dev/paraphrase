@@ -50,9 +50,8 @@ If you have any suggestions/ideas, share with the dev team.
  - https://github.com/mise-dev/paraphrase/discussions
 
  If you want to help the development:
- - bc1qtmezw0sfmq6pz5gvsml6qlv7f89g7u0ae3p69p
- - bc1q8fwscqtprwkauk24f6qtm2mayjh0epsfn3wagm
- - (btc)
+ - (XMR) 88hQweZXKQQQbnbePcGHqXjZCM19wHFLJ6s9PgbQjr3613c2jzQ6ss3eCccXrkThV3ep44g3gCpGfTxNyhzQpT2jLi8evLS
+ - (BTC) bc1qtmezw0sfmq6pz5gvsml6qlv7f89g7u0ae3p69p
 
 <a id="other"></a>
 ## Other
